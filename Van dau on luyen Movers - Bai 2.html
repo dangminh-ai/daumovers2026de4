@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="theme-color" content="#1f7a8c">
+<title>Vườn dâu ôn luyện Movers cùng Dâu – Bài 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#1f7a8c;
+    --pink-deep:#145566;
+    --pink-soft:#dbeff2;
+    --cream:#f5fbfc;
+    --leaf:#2f8f5b;
+    --leaf-soft:#dcf5e6;
+    --seed:#e0973a;
+    --seed-soft:#fff2dc;
+    --plum:#1f2d33;
+    --plum-soft:#5b6b70;
+    --peach-soft:#ffe3d1;
+    --lavender-soft:#dcedf5;
+    --sky-soft:#e3f3fb;
+    --rose-soft:#d7f0ec;
+    --white:#ffffff;
+    --shadow-pink: 0 10px 26px rgba(20,85,102,0.16);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:
+      radial-gradient(circle at 6% 4%, rgba(124,79,209,0.07), transparent 40%),
+      radial-gradient(circle at 96% 10%, rgba(63,138,92,0.06), transparent 40%),
+      var(--cream);
+    color:var(--plum);
+    font-family:'Quicksand', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Baloo 2', 'Quicksand', sans-serif; margin:0; color:var(--pink-deep); }
+  p{ margin:0; }
+  button, input{ font-family:inherit; }
+  a{ color:inherit; }
+  ::selection{ background:var(--rose-soft); }
+  *:focus-visible{ outline:3px solid var(--seed); outline-offset:2px; border-radius:6px; }
+
+  /* ---------- Seed counter ---------- */
+  .seed-counter{
+    position:fixed; top:12px; right:12px; z-index:60;
+    background:var(--white); border:2px solid var(--seed-soft);
+    border-radius:999px; padding:8px 16px 8px 12px;
+    display:flex; align-items:center; gap:6px;
+    font-weight:700; font-size:14px; color:var(--pink-deep);
+    box-shadow:var(--shadow-pink);
+  }
+  .seed-counter .berry{ font-size:18px; }
+  .seed-counter.pop{ animation:seedPop .4s ease; }
+  @keyframes seedPop{ 0%{transform:scale(1);} 45%{transform:scale(1.3) rotate(-6deg);} 100%{transform:scale(1);} }
+
+  /* ---------- Timer ---------- */
+  .timer-badge{
+    position:fixed; top:12px; left:12px; z-index:60;
+    background:var(--white); border:2px solid var(--pink-soft);
+    border-radius:999px; padding:8px 16px;
+    font-weight:700; font-size:14px; color:var(--plum);
+    box-shadow:var(--shadow-pink);
+  }
+
+  /* ---------- Progress bar ---------- */
+  .progress-wrap{ max-width:360px; margin:18px auto 0; position:relative; }
+  .progress-track{
+    background:var(--white); border:2px solid var(--pink-soft);
+    border-radius:999px; height:16px; overflow:hidden;
+  }
+  .progress-fill{
+    height:100%; border-radius:999px;
+    background:linear-gradient(90deg, var(--seed), var(--pink));
+    width:0%; transition:width .5s ease;
+  }
+  .progress-label{ text-align:center; font-size:12.5px; color:var(--plum-soft); margin-top:7px; font-weight:700; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    text-align:center;
+    padding:52px 20px 30px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-berries{
+    position:absolute; inset:0; pointer-events:none;
+    font-size:26px; opacity:0.5;
+  }
+  .hero-berries span{ position:absolute; animation:floaty 5s ease-in-out infinite; }
+  .hero-berries span:nth-child(1){ top:14px; left:8%; animation-delay:0s; }
+  .hero-berries span:nth-child(2){ top:60px; right:10%; animation-delay:1.2s; }
+  .hero-berries span:nth-child(3){ bottom:0; left:20%; animation-delay:2.1s; }
+  .hero-berries span:nth-child(4){ bottom:10px; right:22%; animation-delay:0.6s; }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-12px) rotate(8deg); } }
+  .hero h1{
+    font-size:clamp(28px, 5vw, 42px);
+    font-weight:800;
+    letter-spacing:0.2px;
+    position:relative;
+  }
+  .hero p{
+    margin-top:12px;
+    font-size:clamp(15px, 2.4vw, 18px);
+    color:var(--plum-soft);
+    max-width:480px;
+    margin-left:auto; margin-right:auto;
+    position:relative;
+  }
+
+  /* ---------- Path nav ---------- */
+  .path-nav{
+    position:sticky; top:0; z-index:40;
+    background:rgba(255,248,244,0.94);
+    backdrop-filter:blur(6px);
+    border-bottom:2px dotted var(--rose-soft);
+    padding:10px 12px;
+    display:flex; gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+    overflow-x:auto;
+    scrollbar-width:thin;
+  }
+  .path-nav a{
+    flex:0 0 auto;
+    display:flex; align-items:center; gap:6px;
+    text-decoration:none;
+    background:var(--white);
+    border:2px solid var(--pink-soft);
+    border-radius:999px;
+    padding:7px 14px;
+    font-weight:700; font-size:13.5px; color:var(--pink-deep);
+    white-space:nowrap;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .path-nav a:hover{ transform:translateY(-2px); background:var(--pink-soft); }
+  .path-nav a .cnt{ font-weight:600; color:var(--plum-soft); font-size:12px; }
+  .path-nav a.done{ background:var(--leaf-soft); border-color:var(--leaf); color:var(--leaf); }
+  .path-nav a.done .cnt{ color:var(--leaf); }
+  .path-nav a.bounce{ animation:pillBounce .5s ease; }
+  @keyframes pillBounce{ 0%{transform:scale(1);} 40%{transform:scale(1.22) rotate(-4deg);} 70%{transform:scale(0.96) rotate(3deg);} 100%{transform:scale(1) rotate(0);} }
+
+  .container{ max-width:760px; margin:0 auto; padding:26px 16px 60px; }
+
+  /* ---------- Section patches ---------- */
+  .patch{
+    background:var(--tint, var(--pink-soft));
+    border-radius:34px 34px 34px 8px;
+    padding:26px 20px 30px;
+    margin-bottom:34px;
+  }
+  .patch:nth-of-type(even){ border-radius:34px 34px 8px 34px; }
+  .patch-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  .patch-icon{
+    flex:0 0 auto; width:46px; height:46px; border-radius:50%;
+    background:var(--white); display:flex; align-items:center; justify-content:center;
+    font-size:22px; box-shadow:var(--shadow-pink);
+  }
+  .patch-head h2{ font-size:22px; }
+  .patch-tip{
+    font-size:14px; color:var(--plum-soft); margin:8px 0 20px;
+    background:rgba(255,255,255,0.6); border-radius:14px; padding:10px 14px;
+  }
+
+  /* ---------- Question cards ---------- */
+  .q-card{
+    background:var(--white);
+    border-radius:20px 20px 20px 6px;
+    padding:16px 18px;
+    margin-bottom:12px;
+    box-shadow:0 4px 14px rgba(11,92,133,0.08);
+    transition:box-shadow .15s ease;
+  }
+  .q-card.solved{ box-shadow:0 4px 14px rgba(63,138,92,0.18); }
+  .q-card.locked{ opacity:0.88; }
+  .q-head{ display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; }
+  .q-badge{
+    flex:0 0 auto; width:26px; height:26px; border-radius:50%;
+    background:var(--pink); color:var(--white); font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+  }
+  .q-card.solved .q-badge{ background:var(--leaf); }
+  .q-sentence, .q-def{ font-size:15.5px; }
+  .q-def em{ color:var(--plum-soft); font-style:normal; font-size:13px; }
+  .q-controls{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .q-input{
+    flex:1 1 160px; min-width:140px;
+    padding:9px 12px; font-size:15px;
+    border:2px solid var(--pink-soft); border-radius:12px;
+    background:var(--cream); color:var(--plum);
+  }
+  .q-input:focus{ border-color:var(--pink); background:var(--white); }
+  .btn{
+    border:none; border-radius:999px; padding:9px 16px;
+    font-weight:700; font-size:14px; cursor:pointer;
+    transition:transform .12s ease;
+  }
+  .btn:active{ transform:scale(0.95); }
+  .btn-check{ background:linear-gradient(135deg, var(--pink), var(--pink-deep)); color:var(--white); }
+  .btn-hint{ background:var(--seed-soft); color:#8a5a12; }
+  .q-feedback{ margin-top:8px; font-size:13.5px; font-weight:600; min-height:18px; }
+  .fb-ok{ color:var(--leaf); }
+  .fb-close{ color:#a3690b; }
+  .fb-warn{ color:var(--pink-deep); }
+  .fb-hint{ color:#8a5a12; }
+
+  .shake{ animation:wiggle .4s ease; }
+  @keyframes wiggle{ 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
+
+  /* ---------- Word bank (part 3) ---------- */
+  .wordbank{
+    display:flex; flex-wrap:wrap; gap:8px;
+    background:var(--white); border-radius:18px; padding:14px;
+    margin-bottom:18px;
+  }
+  .wb-chip{
+    background:var(--sky-soft); border:none; border-radius:999px;
+    padding:6px 13px; font-weight:700; font-size:13.5px; color:#8a5a12;
+    cursor:pointer; transition:transform .12s ease;
+  }
+  .wb-chip:hover{ transform:translateY(-2px); }
+
+  /* ---------- Letter slots (part 2) ---------- */
+  .slot-row{ display:flex; flex-wrap:wrap; gap:5px; margin:10px 0 4px; }
+  .slot{
+    width:30px; height:36px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:16px;
+  }
+  span.slot{ background:var(--peach-soft); color:#b05a1c; }
+  input.slot{
+    border:2px dashed var(--pink-soft); background:var(--cream); color:var(--plum);
+    text-align:center; text-transform:uppercase;
+  }
+  input.slot:focus{ border-style:solid; border-color:var(--pink); background:var(--white); }
+
+  /* ---------- Chips: signals / choices ---------- */
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }
+  .chip{
+    border:none; border-radius:999px; padding:8px 15px;
+    font-weight:700; font-size:14px; cursor:pointer;
+    background:var(--lavender-soft); color:#6a3b7a;
+    transition:transform .12s ease, background .15s ease;
+  }
+  .chip:hover{ transform:translateY(-2px); }
+  .chip-correct{ background:var(--leaf-soft); color:var(--leaf); }
+  .chip-signal{ background:var(--lavender-soft); color:#145566; }
+  .chip-choice{ background:var(--rose-soft); color:var(--pink-deep); }
+  .chip-wrong-flash{ animation:wiggle .4s ease; }
+  .step2{ margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .step-label{ font-size:13px; color:var(--plum-soft); font-weight:700; flex-basis:100%; }
+
+  /* ---------- Sentence blocks (part 6) ---------- */
+  .block-row{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:6px; }
+  .block{ font-size:15px; padding:5px 4px; }
+  .block-fixed{ color:var(--plum); }
+  .block-resolved{
+    background:var(--leaf-soft); color:var(--leaf); border-radius:10px;
+    padding:5px 10px; font-weight:700;
+  }
+  .choice-pair{ display:inline-flex; gap:6px; }
+
+  /* ---------- Tokens (part 5) ---------- */
+  .token-row{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:4px; }
+  .token{
+    border:none; background:var(--peach-soft); color:#8a4416;
+    border-radius:10px; padding:6px 9px; font-size:15px; font-weight:600;
+    cursor:pointer; transition:transform .12s ease;
+  }
+  .token:hover{ transform:translateY(-2px); }
+  .token-selected{ background:var(--leaf-soft); color:var(--leaf); }
+  .token-select-wrong{ animation:wiggle .4s ease; }
+
+  /* ---------- Confetti ---------- */
+  .confetti-piece{ position:fixed; font-size:20px; pointer-events:none; z-index:999; animation:confettiFly .9s ease-out forwards; }
+  @keyframes confettiFly{ 0%{ transform:translate(0,0) scale(0.6) rotate(0deg); opacity:1; } 100%{ transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(220deg); opacity:0; } }
+
+  /* ---------- Finale ---------- */
+  .finale{
+    display:none;
+    text-align:center;
+    background:linear-gradient(160deg, var(--pink-soft), var(--seed-soft));
+    border-radius:34px; padding:38px 24px; margin-bottom:34px;
+  }
+  .finale.show{ display:block; }
+  .finale h2{ font-size:26px; margin-bottom:10px; }
+  .finale p{ color:var(--plum-soft); margin-bottom:18px; }
+  .finale .basket{ display:inline-block; font-size:44px; animation:basketBounce 1.4s ease-in-out infinite; margin-bottom:6px; }
+  @keyframes basketBounce{ 0%,100%{ transform:translateY(0) rotate(-4deg); } 50%{ transform:translateY(-10px) rotate(4deg); } }
+  @media (prefers-reduced-motion:reduce){ .finale .basket{ animation:none !important; } }
+
+  .reset-wrap{ text-align:center; padding:10px 0 40px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .btn-reset{
+    background:var(--white); color:var(--plum-soft); border:2px solid var(--pink-soft);
+    border-radius:999px; padding:8px 18px; font-weight:700; font-size:13.5px; cursor:pointer;
+  }
+  .btn-submit{
+    background:linear-gradient(135deg, var(--leaf), #2c6a44); color:var(--white);
+    border:none; border-radius:999px; padding:13px 30px; font-weight:800; font-size:15.5px;
+    cursor:pointer; box-shadow:0 8px 18px rgba(63,138,92,0.28);
+  }
+  .btn-submit:disabled{ opacity:0.5; cursor:not-allowed; box-shadow:none; }
+  .submit-note{ font-size:13px; color:var(--plum-soft); max-width:420px; text-align:center; }
+  input:disabled, button:disabled{ opacity:0.55; cursor:not-allowed; }
+  .summary-box{
+    display:none;
+    max-width:560px; margin:0 auto 28px; background:var(--white);
+    border:2px solid var(--leaf); border-radius:20px; padding:20px 22px;
+  }
+  .summary-box.show{ display:block; }
+  .summary-box h3{ font-size:19px; margin-bottom:10px; }
+  .summary-box p{ font-size:14.5px; margin-bottom:6px; color:var(--plum); }
+  #emailStatus{ font-size:13px; margin-top:8px; font-weight:600; }
+
+  @media (max-width:480px){
+    .q-controls{ flex-direction:column; align-items:stretch; }
+    .q-input{ min-width:0; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hero-berries span, .seed-counter.pop, .shake, .chip-wrong-flash, .token-select-wrong, .confetti-piece, .path-nav a.bounce{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="seed-counter" id="seedCounter"><span class="berry">🍓</span><span id="seedCount">0</span>/90 hạt dâu</div>
+<div class="timer-badge" id="timerBadge">⏱️ 00:00</div>
+
+<header class="hero">
+  <div class="hero-berries" aria-hidden="true"><span>🍓</span><span>🍃</span><span>🍓</span><span>🍃</span></div>
+  <h1>Vườn dâu ôn luyện Movers – Bài 2 🍓</h1>
+  <p>Dâu ơi, hãy coi đây như một bài kiểm tra thật: đọc thật kỹ, tự suy nghĩ trước khi bấm gợi ý, làm lần lượt từ đầu đến cuối rồi mới nộp bài nhé.</p>
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill" role="progressbar" aria-valuemin="0" aria-valuemax="90" aria-valuenow="0"></div></div>
+    <p class="progress-label" id="progressLabel">0/90 hạt dâu đã hái</p>
+  </div>
+</header>
+
+<nav class="path-nav" id="pathNav">
+  <a href="#sec1" id="navpill-1">🔍 Thám tử chính tả <span class="cnt" id="navcount-1">0/15</span></a>
+  <a href="#sec2" id="navpill-2">🗝️ Kho báu chữ cái <span class="cnt" id="navcount-2">0/15</span></a>
+  <a href="#sec3" id="navpill-3">🧺 Giỏ từ vựng <span class="cnt" id="navcount-3">0/15</span></a>
+  <a href="#sec4" id="navpill-4">⏰ Máy dò thời gian <span class="cnt" id="navcount-4">0/15</span></a>
+  <a href="#sec5" id="navpill-5">🐞 Thợ săn lỗi sai <span class="cnt" id="navcount-5">0/15</span></a>
+  <a href="#sec6" id="navpill-6">🧩 Xây câu hoàn chỉnh <span class="cnt" id="navcount-6">0/15</span></a>
+</nav>
+
+<main class="container">
+
+  <section class="patch" id="sec1" style="--tint:var(--pink-soft)">
+    <div class="patch-head"><span class="patch-icon">🔍</span><h2>Thám tử chính tả</h2></div>
+    <p class="patch-tip">Mỗi câu dưới đây có một từ bị viết sai một chữ cái thôi. Đọc thật kỹ rồi gõ lại từ đúng vào ô nhé.</p>
+    <div id="p1-list"></div>
+  </section>
+
+  <section class="patch" id="sec2" style="--tint:var(--peach-soft)">
+    <div class="patch-head"><span class="patch-icon">🗝️</span><h2>Kho báu chữ cái</h2></div>
+    <p class="patch-tip">Đọc gợi ý tiếng Anh rồi điền chữ cái còn thiếu vào từng ô nhé. Mấy từ này hay bị quên chữ hoặc gấp đôi phụ âm lắm đó, để ý kỹ nha!</p>
+    <div id="p2-list"></div>
+  </section>
+
+  <section class="patch" id="sec3" style="--tint:var(--sky-soft)">
+    <div class="patch-head"><span class="patch-icon">🧺</span><h2>Giỏ từ vựng</h2></div>
+    <p class="patch-tip">Chọn đúng từ trong giỏ bên dưới và viết cho thật chính xác từng chữ cái vào chỗ trống nhé.</p>
+    <div class="wordbank" id="p3-wordbank"></div>
+    <div id="p3-list"></div>
+  </section>
+
+  <section class="patch" id="sec4" style="--tint:var(--lavender-soft)">
+    <div class="patch-head"><span class="patch-icon">⏰</span><h2>Máy dò thời gian</h2></div>
+    <p class="patch-tip">Bước 1, bấm vào đúng từ tín hiệu thời gian trong câu. Bước 2, chia động từ trong ngoặc cho đúng nhé!</p>
+    <div id="p4-list"></div>
+  </section>
+
+  <section class="patch" id="sec5" style="--tint:var(--leaf-soft)">
+    <div class="patch-head"><span class="patch-icon">🐞</span><h2>Thợ săn lỗi sai</h2></div>
+    <p class="patch-tip">Có một từ sai đang trốn trong mỗi câu. Bấm vào từ đó rồi viết lại cho đúng nhé!</p>
+    <div id="p5-list"></div>
+  </section>
+
+  <section class="patch" id="sec6" style="--tint:var(--rose-soft)">
+    <div class="patch-head"><span class="patch-icon">🧩</span><h2>Xây câu hoàn chỉnh</h2></div>
+    <p class="patch-tip">Chọn từ đúng ở mỗi chỗ trống, tránh xa mấy từ bẫy nha. Sau đó viết lại cả câu cho hoàn chỉnh nhé!</p>
+    <div id="p6-list"></div>
+  </section>
+
+  <section class="finale" id="finale">
+    <span class="basket" aria-hidden="true">🧺</span>
+    <h2>Dâu giỏi quá luôn! 🎉</h2>
+    <p>Dâu đã làm xong tất cả các câu rồi. Giờ Dâu xem lại một lượt rồi bấm "Nộp bài" khi đã sẵn sàng nhé.</p>
+  </section>
+
+  <div class="summary-box" id="summaryBox"></div>
+
+  <div class="reset-wrap">
+    <p class="submit-note">Khi Dâu bấm "Nộp bài", kết quả và các câu làm sai sẽ được gửi tự động cho anh. Nộp bài xong Dâu vẫn có thể bấm "Làm lại từ đầu" để luyện lại toàn bộ.</p>
+    <button class="btn-submit" id="submitBtn" onclick="doSubmit()">Nộp bài</button>
+    <div id="emailStatus"></div>
+    <button class="btn-reset" onclick="resetProgress()">Làm lại từ đầu</button>
+  </div>
+
+</main>
+
+<script>
+/* ================= DATA ================= */
+const DATA = {
+  p1: [
+    {id:"1-1", sentence:"My uncle has got one son and one dauther.", answer:"daughter"},
+    {id:"1-2", sentence:"Always wear a strong helmit when you ride your bike.", answer:"helmet"},
+    {id:"1-3", sentence:"We have an exciting music lesson every Thirsday morning.", answer:"Thursday"},
+    {id:"1-4", sentence:"The little mouse ate a small piece of chese on the kitchen floor.", answer:"cheese"},
+    {id:"1-5", sentence:"Fred is learning to play the giutar in the school band.", answer:"guitar"},
+    {id:"1-6", sentence:"The giraffe is the tallest animel in the world.", answer:"animal"},
+    {id:"1-7", sentence:"You need to buy a new blue toothbrash at the shop.", answer:"toothbrush"},
+    {id:"1-8", sentence:"Show your bus tickit to the driver, please.", answer:"ticket"},
+    {id:"1-9", sentence:"There are three funny clowns at the circas today.", answer:"circus"},
+    {id:"1-10", sentence:"Sally drew a beautiful picter of a sailing boat.", answer:"picture"},
+    {id:"1-11", sentence:"The children sat around a large sqaure table in class.", answer:"square"},
+    {id:"1-12", sentence:"Put on your warm yellow jaket before going outside.", answer:"jacket"},
+    {id:"1-13", sentence:"Would you like a cold glass of limonade with ice?", answer:"lemonade"},
+    {id:"1-14", sentence:"Our cat has got a cute little black kiten.", answer:"kitten"},
+    {id:"1-15", sentence:"Many wild birds and bats live in this dark forrest.", answer:"forest"}
+  ],
+  p2: [
+    {id:"2-1", def:"Con gái của bố và mẹ.", word:"DAUGHTER", fixed:{0:"D",1:"A",5:"T",6:"E",7:"R"}},
+    {id:"2-2", def:"Ngày trong tuần, nằm giữa thứ Tư và thứ Sáu.", word:"THURSDAY", fixed:{0:"T",1:"H",3:"R",5:"D",6:"A",7:"Y"}},
+    {id:"2-3", def:"Chú chó con nhỏ, rất thích chơi đùa (chữ kép 'p').", word:"PUPPY", fixed:{0:"P",2:"P",4:"Y"}},
+    {id:"2-4", def:"Chú mèo con nhỏ và mềm mại (chữ kép 't').", word:"KITTEN", fixed:{0:"K",1:"I",4:"E",5:"N"}},
+    {id:"2-5", def:"Con vật rất cao, có cổ dài và nhiều đốm trên da.", word:"GIRAFFE", fixed:{0:"G",1:"I",3:"A",6:"E"}},
+    {id:"2-6", def:"Củ rau màu cam dài mà thỏ rất thích ăn (chữ kép 'r').", word:"CARROT", fixed:{0:"C",1:"A",4:"O",5:"T"}},
+    {id:"2-7", def:"Thực phẩm màu vàng làm từ sữa, phết lên bánh mì (chữ kép 't').", word:"BUTTER", fixed:{0:"B",1:"U",4:"E",5:"R"}},
+    {id:"2-8", def:"Nhạc cụ có dây, chơi bằng cách gảy ngón tay.", word:"GUITAR", fixed:{0:"G",2:"I",4:"A",5:"R"}},
+    {id:"2-9", def:"Bàn chải nhỏ dùng với kem đánh răng để làm sạch răng.", word:"TOOTHBRUSH", fixed:{0:"T",1:"O",3:"T",4:"H",6:"R",7:"U",8:"S",9:"H"}},
+    {id:"2-10", def:"Đeo trước mắt để nhìn mọi thứ rõ hơn (chữ kép 's').", word:"GLASSES", fixed:{0:"G",1:"L",3:"S",5:"E",6:"S"}},
+    {id:"2-11", def:"Buổi biểu diễn lớn trong rạp, có nhạc và các chú hề vui nhộn.", word:"CIRCUS", fixed:{0:"C",2:"R",3:"C",5:"S"}},
+    {id:"2-12", def:"Hình có bốn cạnh dài bằng nhau.", word:"SQUARE", fixed:{0:"S",1:"Q",4:"R",5:"E"}},
+    {id:"2-13", def:"Hàng ria mọc phía trên miệng, dưới mũi của đàn ông.", word:"MOUSTACHE", fixed:{0:"M",1:"O",3:"S",4:"T",6:"C",7:"H",8:"E"}},
+    {id:"2-14", def:"Mảnh giấy nhỏ Dâu mua để được lên xe buýt hoặc tàu.", word:"TICKET", fixed:{0:"T",1:"I",3:"K",5:"T"}},
+    {id:"2-15", def:"Nơi rộng lớn có nhiều cây, chim và thú hoang dã sinh sống (chỉ có 1 chữ 'r').", word:"FOREST", fixed:{0:"F",1:"O",4:"S",5:"T"}}
+  ],
+  wordbank3: ["balcony","bandage","cafe","clown","comic","farmer","helmet","jungle","noodles","pasta","pirate","playground","roller skates","supermarket","tractor"],
+  p3: [
+    {id:"3-1", before:"You can sit outside on this small upstairs floor outside your bedroom window:", after:"", answer:"balcony"},
+    {id:"3-2", before:"A doctor puts this long white cloth around a sore arm or leg:", after:"", answer:"bandage"},
+    {id:"3-3", before:"People go to this nice place to sit, drink lemonade and eat cake:", after:"", answer:"cafe"},
+    {id:"3-4", before:"This person wears big funny shoes and makes children laugh:", after:"", answer:"clown"},
+    {id:"3-5", before:"You read this magazine with lots of pictures and exciting stories:", after:"", answer:"comic"},
+    {id:"3-6", before:"This person works outdoors in fields and takes care of cows and sheep:", after:"", answer:"farmer"},
+    {id:"3-7", before:"Always put this hard hat on your head before riding your bicycle:", after:"", answer:"helmet"},
+    {id:"3-8", before:"A hot, wet forest where many parrots, monkeys and snakes live:", after:"", answer:"jungle"},
+    {id:"3-9", before:"Long, thin food from flour that you eat with chopsticks in hot soup:", after:"", answer:"noodles"},
+    {id:"3-10", before:"Hot food from Italy made of flour and water, often eaten with tomato sauce:", after:"", answer:"pasta"},
+    {id:"3-11", before:"A sailor on an old ship who looks for gold and treasure:", after:"", answer:"pirate"},
+    {id:"3-12", before:"Children have fun running, jumping and playing on swings in this park area:", after:"", answer:"playground"},
+    {id:"3-13", before:"You wear these boots with wheels on your feet to move fast on the path:", after:"", answer:"roller skates"},
+    {id:"3-14", before:"A very large shop where your family buys fruit, vegetables and bread:", after:"", answer:"supermarket"},
+    {id:"3-15", before:"A large, strong vehicle that a person drives on farm fields:", after:"", answer:"tractor"}
+  ],
+  p4: [
+    {id:"4-1", before:"Look! That tall man (carry)", after:"a very heavy box.", signal:"Look!", decoys:["always","every day"], correct:"is carrying"},
+    {id:"4-2", before:"My sister always (tidy)", after:"her small bedroom before school.", signal:"always", decoys:["now","Listen!"], correct:"tidies"},
+    {id:"4-3", before:"Listen! Someone (shout)", after:"loudly outside the window.", signal:"Listen!", decoys:["every day","often"], correct:"is shouting"},
+    {id:"4-4", before:"Mr Green (teach)", after:"English at our school every Monday.", signal:"every Monday", decoys:["now","Look!"], correct:"teaches"},
+    {id:"4-5", before:"The two boys (jump)", after:"into the pool right now.", signal:"right now", decoys:["always","every day"], correct:"are jumping"},
+    {id:"4-6", before:"My uncle (fly)", after:"big planes to different cities every week.", signal:"every week", decoys:["now","Look!"], correct:"flies"},
+    {id:"4-7", before:"At the moment, the little girl (cry)", after:"because she lost her toy.", signal:"At the moment", decoys:["every day","always"], correct:"is crying"},
+    {id:"4-8", before:"Jane never (buy)", after:"sweets at the supermarket.", signal:"never", decoys:["now","Listen!"], correct:"buys"},
+    {id:"4-9", before:"Look at the kitten! It (hide)", after:"under the kitchen chair.", signal:"Look", decoys:["every day","always"], correct:"is hiding"},
+    {id:"4-10", before:"My parents (drink)", after:"hot tea after dinner every evening.", signal:"every evening", decoys:["now","Listen!"], correct:"drink"},
+    {id:"4-11", before:"Right now, the pupils (listen)", after:"carefully to the teacher.", signal:"Right now", decoys:["every day","always"], correct:"are listening"},
+    {id:"4-12", before:"Charlie often (help)", after:"his grandfather on the farm.", signal:"often", decoys:["now","at the moment"], correct:"helps"},
+    {id:"4-13", before:"Look! The pirate (point)", after:"at the big sailing ship.", signal:"Look!", decoys:["every day","always"], correct:"is pointing"},
+    {id:"4-14", before:"The children usually (have)", after:"biscuits and fruit after school.", signal:"usually", decoys:["now","at the moment"], correct:"have"},
+    {id:"4-15", before:"At the moment, two women (wait)", after:"at the bus station.", signal:"At the moment", decoys:["always","every day"], correct:"are waiting"}
+  ],
+  p5: [
+    {id:"5-1", tokens:["The","elephant","is","big,","but","the","hippo","drinking","water."], wrongIndex:7, correct:"is drinking"},
+    {id:"5-2", tokens:["Does","your","sister","lives","in","a","flat","with","a","balcony?"], wrongIndex:3, correct:"live"},
+    {id:"5-3", tokens:["My","uncle","teachs","English","at","a","famous","school","in","town."], wrongIndex:2, correct:"teaches"},
+    {id:"5-4", tokens:["Look!","Three","men","are","puting","the","heavy","bags","into","the","car."], wrongIndex:4, correct:"putting"},
+    {id:"5-5", tokens:["Sally","is","skateing","very","quickly","on","the","road","with","her","friends."], wrongIndex:2, correct:"skating"},
+    {id:"5-6", tokens:["There","are","three","mices","hiding","behind","the","kitchen","door."], wrongIndex:3, correct:"mice"},
+    {id:"5-7", tokens:["He","doesn't","likes","chocolate","cake","with","ice","cream."], wrongIndex:2, correct:"like"},
+    {id:"5-8", tokens:["The","yellow","taxi","is","stoping","in","front","of","the","supermarket."], wrongIndex:4, correct:"stopping"},
+    {id:"5-9", tokens:["The","farmer","fixs","his","old","green","tractor","every","Saturday."], wrongIndex:2, correct:"fixes"},
+    {id:"5-10", tokens:["The","children","aren't","play","outside","because","it","is","raining."], wrongIndex:3, correct:"playing"},
+    {id:"5-11", tokens:["Both","of","my","foots","are","cold","and","wet","after","the","rain."], wrongIndex:3, correct:"feet"},
+    {id:"5-12", tokens:["My","brother","is","haveing","a","warm","shower","in","the","bathroom","now."], wrongIndex:3, correct:"having"},
+    {id:"5-13", tokens:["Do","your","mother","walk","to","the","sports","centre","every","afternoon?"], wrongIndex:0, correct:"Does"},
+    {id:"5-14", tokens:["The","bus","is","geting","near","the","station","at","the","moment."], wrongIndex:3, correct:"getting"},
+    {id:"5-15", tokens:["The","little","bird","flys","over","the","river","every","morning."], wrongIndex:3, correct:"flies"}
+  ],
+  p6: [
+    {id:"6-1", blocks:[{type:"fixed",text:"Look!"},{type:"fixed",text:"The kitten"},{type:"choice",options:["is","are"],correct:"is"},{type:"choice",options:["sitting","siting"],correct:"sitting"},{type:"fixed",text:"on the mat."}], key:"Look! The kitten is sitting on the mat."},
+    {id:"6-2", blocks:[{type:"fixed",text:"Every morning,"},{type:"fixed",text:"the farmer"},{type:"choice",options:["drives","drive"],correct:"drives"},{type:"fixed",text:"his tractor to the field."}], key:"Every morning, the farmer drives his tractor to the field."},
+    {id:"6-3", blocks:[{type:"fixed",text:"At the moment,"},{type:"fixed",text:"the women"},{type:"choice",options:["are","is"],correct:"are"},{type:"choice",options:["having","haveing"],correct:"having"},{type:"fixed",text:"tea in the cafe."}], key:"At the moment, the women are having tea in the cafe."},
+    {id:"6-4", blocks:[{type:"fixed",text:"He"},{type:"choice",options:["doesn't","don't"],correct:"doesn't"},{type:"choice",options:["eat","eats"],correct:"eat"},{type:"fixed",text:"onions or carrots."}], key:"He doesn't eat onions or carrots."},
+    {id:"6-5", blocks:[{type:"fixed",text:"Listen!"},{type:"fixed",text:"The baby"},{type:"choice",options:["is","are"],correct:"is"},{type:"choice",options:["crying","cry"],correct:"crying"},{type:"fixed",text:"in the bedroom."}], key:"Listen! The baby is crying in the bedroom."},
+    {id:"6-6", blocks:[{type:"fixed",text:"My brother"},{type:"fixed",text:"always"},{type:"choice",options:["tidies","tidys"],correct:"tidies"},{type:"fixed",text:"his desk after school."}], key:"My brother always tidies his desk after school."},
+    {id:"6-7", blocks:[{type:"fixed",text:"Now,"},{type:"fixed",text:"the pirate"},{type:"choice",options:["is","are"],correct:"is"},{type:"choice",options:["carrying","carry"],correct:"carrying"},{type:"fixed",text:"a big treasure box."}], key:"Now, the pirate is carrying a big treasure box."},
+    {id:"6-8", blocks:[{type:"choice",options:["Do","Does"],correct:"Do"},{type:"fixed",text:"your parents"},{type:"choice",options:["watch","watches"],correct:"watch"},{type:"fixed",text:"films at the weekend?"}], key:"Do your parents watch films at the weekend?"},
+    {id:"6-9", blocks:[{type:"fixed",text:"Look!"},{type:"fixed",text:"The red car"},{type:"fixed",text:"is"},{type:"choice",options:["stopping","stoping"],correct:"stopping"},{type:"fixed",text:"near the hospital."}], key:"Look! The red car is stopping near the hospital."},
+    {id:"6-10", blocks:[{type:"fixed",text:"On Fridays,"},{type:"fixed",text:"the boys"},{type:"choice",options:["go","goes"],correct:"go"},{type:"fixed",text:"to the sports centre."}], key:"On Fridays, the boys go to the sports centre."},
+    {id:"6-11", blocks:[{type:"fixed",text:"Right now,"},{type:"fixed",text:"she"},{type:"choice",options:["is","are"],correct:"is"},{type:"choice",options:["skating","skateing"],correct:"skating"},{type:"fixed",text:"with her cousin."}], key:"Right now, she is skating with her cousin."},
+    {id:"6-12", blocks:[{type:"fixed",text:"My uncle"},{type:"fixed",text:"never"},{type:"choice",options:["misses","miss"],correct:"misses"},{type:"fixed",text:"the morning train."}], key:"My uncle never misses the morning train."},
+    {id:"6-13", blocks:[{type:"fixed",text:"Look!"},{type:"fixed",text:"Two mice"},{type:"choice",options:["are","is"],correct:"are"},{type:"choice",options:["running","runing"],correct:"running"},{type:"fixed",text:"across the kitchen floor."}], key:"Look! Two mice are running across the kitchen floor."},
+    {id:"6-14", blocks:[{type:"fixed",text:"The doctor"},{type:"choice",options:["checks","check"],correct:"checks"},{type:"fixed",text:"the boy's"},{type:"choice",options:["feet","foots"],correct:"feet"},{type:"fixed",text:"carefully."}], key:"The doctor checks the boy's feet carefully."},
+    {id:"6-15", blocks:[{type:"fixed",text:"Right now,"},{type:"fixed",text:"the pupils"},{type:"choice",options:["are","is"],correct:"are"},{type:"choice",options:["putting","puting"],correct:"putting"},{type:"fixed",text:"on their warm coats."}], key:"Right now, the pupils are putting on their warm coats."}
+  ]
+};
+
+/* ================= HELPERS ================= */
+const OK_MSG = ["Chính xác luôn, Dâu giỏi quá!","Đúng rồi đó, tuyệt vời!","Giỏi ghê, làm tốt lắm!","Chuẩn không cần chỉnh!","Xuất sắc, tiếp tục nào!"];
+const CLOSE_MSG = ["Gần đúng rồi, đếm lại từng chữ cái xem có thiếu hay thừa chữ nào không nhé.","Sát nút luôn, xem lại chính tả một chút xíu nữa nào.","Chỉ sai một tí thôi, nhìn kỹ lại từng chữ cái nhé."];
+const WARN_MSG = ["Chưa đúng rồi, đọc lại câu rồi thử lần nữa nhé.","Chưa đúng đâu, Dâu thử lại xem nào.","Chưa được rồi, bình tĩnh đọc lại nhé."];
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function normalize(s){ return (s||"").trim().toLowerCase().replace(/\s+/g," "); }
+function normalizePunct(s){ return normalize(s).replace(/[.,!?;:"'’]/g,""); }
+function escAttr(s){ return String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function shakeEl(el){ if(!el) return; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+function lev(a,b){
+  const m=a.length, n=b.length;
+  const dp=[]; for(let i=0;i<=m;i++){ dp.push(new Array(n+1).fill(0)); dp[i][0]=i; }
+  for(let j=0;j<=n;j++) dp[0][j]=j;
+  for(let i=1;i<=m;i++){ for(let j=1;j<=n;j++){
+    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  }}
+  return dp[m][n];
+}
+
+/* ---------- sound ---------- */
+let audioCtx=null;
+function playTone(freq,dur){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+    osc.type="sine"; osc.frequency.value=freq;
+    gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.16, audioCtx.currentTime+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime+dur);
+  }catch(e){}
+}
+function playDing(){ playTone(880,0.16); setTimeout(()=>playTone(1180,0.2),90); }
+
+/* ---------- confetti ---------- */
+function spawnConfetti(anchorEl){
+  try{
+    const rect = anchorEl.getBoundingClientRect();
+    const emojis=["🍓","✨","💖","🌟","🍃"];
+    for(let i=0;i<10;i++){
+      const s=document.createElement("span");
+      s.className="confetti-piece";
+      s.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      const dx=(Math.random()-0.5)*170, dy=-(60+Math.random()*100);
+      s.style.setProperty("--dx", dx+"px");
+      s.style.setProperty("--dy", dy+"px");
+      s.style.left=(rect.left+rect.width/2)+"px";
+      s.style.top=(rect.top+rect.height/2)+"px";
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 900);
+    }
+  }catch(e){}
+}
+
+/* ---------- seed / progress ---------- */
+let seeds = new Set();
+function loadProgress(){
+  try{ const raw=localStorage.getItem("dau_movers_seeds_bai2_v1"); if(raw){ JSON.parse(raw).forEach(id=>seeds.add(id)); } }catch(e){}
+}
+function saveProgress(){
+  try{ localStorage.setItem("dau_movers_seeds_bai2_v1", JSON.stringify([...seeds])); }catch(e){}
+}
+function popSeedCounter(){
+  const el=document.getElementById("seedCounter");
+  el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
+}
+let finaleCelebrated = false;
+
+/* ---------- exam state: attempts, timer, focus tracking ---------- */
+const TEACHER_EMAIL = "ddangminh1905@gmail.com";
+let attempts = {};       // itemId -> last value Dâu typed/assembled (right or wrong)
+let attemptCounts = {};  // itemId -> number of wrong tries (locked after 2)
+function registerAttempt(id){
+  attemptCounts[id] = (attemptCounts[id]||0) + 1;
+  return attemptCounts[id];
+}
+function isLocked(id){
+  return (attemptCounts[id]||0) >= 2;
+}
+function lockItem(card){
+  if(!card) return;
+  card.classList.add("locked");
+  card.querySelectorAll("input, button").forEach(el=>{ el.disabled = true; });
+}
+let examSubmitted = false;
+let tabSwitchCount = 0;
+let startTime = Date.now();
+let timerInterval = null;
+
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden && !examSubmitted) tabSwitchCount++;
+});
+
+function startTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimerDisplay, 1000);
+  updateTimerDisplay();
+}
+function stopTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+}
+function updateTimerDisplay(){
+  const el = document.getElementById("timerBadge");
+  if(!el) return;
+  const secs = Math.max(0, Math.floor((Date.now()-startTime)/1000));
+  const mm = String(Math.floor(secs/60)).padStart(2,"0");
+  const ss = String(secs%60).padStart(2,"0");
+  el.textContent = "⏱️ " + mm + ":" + ss;
+}
+
+function updateSeedCounter(){
+  document.getElementById("seedCount").textContent = seeds.size;
+  for(let s=1;s<=6;s++){
+    const count = [...seeds].filter(id=>id.indexOf(s+"-")===0).length;
+    const cnt = document.getElementById("navcount-"+s);
+    if(cnt) cnt.textContent = count+"/15";
+    const pill = document.getElementById("navpill-"+s);
+    if(pill){
+      const wasDone = pill.classList.contains("done");
+      pill.classList.toggle("done", count===15);
+      if(count===15 && !wasDone) celebratePartDone(pill);
+    }
+  }
+  const fill = document.getElementById("progressFill");
+  const label = document.getElementById("progressLabel");
+  if(fill){ fill.style.width = Math.round((seeds.size/90)*100)+"%"; fill.setAttribute("aria-valuenow", seeds.size); }
+  if(label) label.textContent = seeds.size+"/90 hạt dâu đã hái";
+  const done = seeds.size>=90;
+  const finale = document.getElementById("finale");
+  if(finale) finale.classList.toggle("show", done);
+  if(done && !finaleCelebrated){
+    finaleCelebrated = true;
+    bigCelebration();
+  }
+}
+function celebratePartDone(pillEl){
+  pillEl.classList.remove("bounce"); void pillEl.offsetWidth; pillEl.classList.add("bounce");
+  popSeedCounter();
+  if(pillEl) spawnConfetti(pillEl);
+  playDing(); setTimeout(playDing, 180);
+}
+function bigCelebration(){
+  const emojis=["🍓","✨","💖","🌟","🍃","🎉"];
+  for(let i=0;i<36;i++){
+    setTimeout(()=>{
+      const s=document.createElement("span");
+      s.className="confetti-piece";
+      s.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.left=(Math.random()*window.innerWidth)+"px";
+      s.style.top="-30px";
+      s.style.fontSize=(16+Math.random()*16)+"px";
+      s.style.setProperty("--dx", ((Math.random()-0.5)*140)+"px");
+      s.style.setProperty("--dy", (window.innerHeight+80)+"px");
+      s.style.animationDuration=(1.3+Math.random()*0.9)+"s";
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 2400);
+    }, i*35);
+  }
+  playDing(); setTimeout(playDing, 260); setTimeout(playDing, 540);
+}
+function awardSeed(id, anchorEl){
+  if(seeds.has(id)) return;
+  seeds.add(id);
+  saveProgress();
+  updateSeedCounter();
+  popSeedCounter();
+  if(anchorEl) spawnConfetti(anchorEl);
+  playDing();
+}
+function markSolvedIfNeeded(card, id){
+  if(seeds.has(id)) card.classList.add("solved");
+}
+
+/* ================= PART 1: Thám tử chính tả ================= */
+function renderP1(){
+  document.getElementById("p1-list").innerHTML = DATA.p1.map((item,i)=>`
+    <div class="q-card" data-id="${item.id}">
+      <div class="q-head"><span class="q-badge">${i+1}</span><p class="q-sentence">${item.sentence}</p></div>
+      <div class="q-controls">
+        <input type="text" class="q-input" id="in-${item.id}" placeholder="Từ đúng là..." autocomplete="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter'){checkP1('${item.id}', this);}">
+        <button class="btn btn-check" onclick="checkP1('${item.id}', this)">Kiểm tra</button>
+        <button class="btn btn-hint" onclick="hintP1('${item.id}')">Gợi ý</button>
+      </div>
+      <div class="q-feedback" id="fb-${item.id}"></div>
+    </div>
+  `).join("");
+  document.querySelectorAll("#p1-list .q-card").forEach(c=>markSolvedIfNeeded(c, c.dataset.id));
+}
+let hintLevel1 = {};
+function hintP1(id){
+  const item = DATA.p1.find(x=>x.id===id);
+  hintLevel1[id] = (hintLevel1[id]||0)+1;
+  const fb = document.getElementById("fb-"+id);
+  const a = item.answer;
+  if(hintLevel1[id]===1){
+    fb.innerHTML = '<span class="fb-hint">Gợi ý: từ đúng có '+a.length+' chữ cái, bắt đầu bằng chữ "'+a[0].toUpperCase()+'".</span>';
+  } else if(hintLevel1[id]===2){
+    fb.innerHTML = '<span class="fb-hint">Gợi ý thêm: chữ cuối cùng là "'+a[a.length-1].toUpperCase()+'". Đọc lại cả câu để đoán nghĩa của từ nhé.</span>';
+  } else {
+    fb.innerHTML = '<span class="fb-hint">Dâu đã xem gợi ý rồi, giờ hãy tự đánh vần và gõ thử vào ô nhé. Kiểm tra sẽ báo cho Dâu biết đúng hay chưa.</span>';
+  }
+}
+function checkP1(id, anchorEl){
+  const item = DATA.p1.find(x=>x.id===id);
+  const inputEl = document.getElementById("in-"+id);
+  const val = normalize(inputEl.value);
+  const fb = document.getElementById("fb-"+id);
+  const card = document.querySelector('#p1-list .q-card[data-id="'+id+'"]');
+  if(isLocked(id)) return;
+  if(!val){ fb.innerHTML = '<span class="fb-warn">Dâu gõ từ vào ô đã nhé.</span>'; return; }
+  attempts[id] = val;
+  if(val === item.answer.toLowerCase()){
+    fb.innerHTML = '<span class="fb-ok">'+pick(OK_MSG)+'</span>';
+    card.classList.add("solved");
+    awardSeed(item.id, anchorEl);
+  } else {
+    const n = registerAttempt(id);
+    if(n >= 2){
+      fb.innerHTML = '<span class="fb-warn">Dâu đã thử 2 lần cho câu này rồi, hết lượt. Làm lại bài để thử lại nhé.</span>';
+      lockItem(card);
+    } else {
+      const d = lev(val, item.answer.toLowerCase());
+      fb.innerHTML = (d>0 && d<=2) ? '<span class="fb-close">'+pick(CLOSE_MSG)+' (còn 1 lượt thử)</span>' : '<span class="fb-warn">'+pick(WARN_MSG)+' (còn 1 lượt thử)</span>';
+      shakeEl(card);
+    }
+  }
+}
+
+/* ================= PART 2: Kho báu chữ cái ================= */
+function renderP2(){
+  document.getElementById("p2-list").innerHTML = DATA.p2.map((item,i)=>{
+    const letters = item.word.split("");
+    let slots = "";
+    for(let idx=0; idx<letters.length; idx++){
+      if(item.fixed[idx]){
+        slots += '<span class="slot">'+item.fixed[idx]+'</span>';
+      } else {
+        slots += '<input class="slot" maxlength="1" data-item="'+item.id+'" data-index="'+idx+'" autocomplete="off" spellcheck="false" oninput="onSlotInput(event)" onkeydown="onSlotKeydown(event)">';
+      }
+    }
+    return `
+    <div class="q-card" data-id="${item.id}">
+      <div class="q-head"><span class="q-badge">${i+1}</span><p class="q-def">${item.def} <em>(${letters.length} chữ cái)</em></p></div>
+      <div class="slot-row">${slots}</div>
+      <div class="q-feedback" id="fb-${item.id}"></div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("#p2-list .q-card").forEach(card=>{
+    markSolvedIfNeeded(card, card.dataset.id);
+    if(seeds.has(card.dataset.id)){
+      const item = DATA.p2.find(x=>x.id===card.dataset.id);
+      const inputs = card.querySelectorAll("input.slot");
+      let letters = item.word.split(""), ii=0;
+      inputs.forEach(inp=>{
+        while(item.fixed[ii]!==undefined) ii++;
+        inp.value = letters[ii]; ii++;
+      });
+    }
+  });
+}
+function onSlotInput(e){
+  const el = e.target;
+  el.value = el.value.replace(/[^a-zA-Z]/g,"").slice(0,1).toUpperCase();
+  if(el.value){
+    let sib = el.nextElementSibling;
+    while(sib && !(sib.tagName==="INPUT" && sib.classList.contains("slot"))) sib = sib.nextElementSibling;
+    if(sib) sib.focus();
+  }
+  maybeCheckP2(el.dataset.item);
+}
+function onSlotKeydown(e){
+  if(e.key==="Backspace" && !e.target.value){
+    let sib = e.target.previousElementSibling;
+    while(sib && !(sib.tagName==="INPUT" && sib.classList.contains("slot"))) sib = sib.previousElementSibling;
+    if(sib) sib.focus();
+  }
+}
+function maybeCheckP2(itemId){
+  const item = DATA.p2.find(x=>x.id===itemId);
+  const card = document.querySelector('#p2-list .q-card[data-id="'+itemId+'"]');
+  if(isLocked(itemId)) return;
+  const inputs = card.querySelectorAll("input.slot");
+  const allFilled = [...inputs].every(i=>i.value.length===1);
+  if(!allFilled) return;
+  const slotEls = card.querySelectorAll(".slot");
+  let assembled = "";
+  slotEls.forEach(s=>{ assembled += (s.tagName==="INPUT" ? s.value : s.textContent); });
+  const fb = document.getElementById("fb-"+itemId);
+  if(assembled.toUpperCase() === item.word.toUpperCase()){
+    attempts[itemId] = assembled;
+    fb.innerHTML = '<span class="fb-ok">'+pick(OK_MSG)+'</span>';
+    card.classList.add("solved");
+    awardSeed(itemId, inputs[inputs.length-1]);
+  } else {
+    attempts[itemId] = assembled;
+    const n = registerAttempt(itemId);
+    if(n >= 2){
+      fb.innerHTML = '<span class="fb-warn">Dâu đã thử 2 lần cho câu này rồi, hết lượt. Làm lại bài để thử lại nhé.</span>';
+      lockItem(card);
+    } else {
+      fb.innerHTML = '<span class="fb-warn">Chưa đúng rồi, ghép lại xem nào. (còn 1 lượt thử)</span>';
+      shakeEl(card);
+    }
+  }
+}
+
+/* ================= PART 3: Giỏ từ vựng ================= */
+let activeP3Input = null;
+function renderP3wordbank(){
+  document.getElementById("p3-wordbank").innerHTML = DATA.wordbank3.map(w=>`<button type="button" class="wb-chip" onclick="insertChip('${w}')">${w}</button>`).join("");
+}
+function insertChip(word){
+  if(activeP3Input){ activeP3Input.value = word; activeP3Input.focus(); }
+}
+function renderP3(){
+  document.getElementById("p3-list").innerHTML = DATA.p3.map((item,i)=>`
+    <div class="q-card" data-id="${item.id}">
+      <div class="q-head"><span class="q-badge">${i+1}</span><p class="q-sentence">${item.before} <input type="text" class="q-input" style="display:inline-block;width:140px;margin:0 4px;" id="in-${item.id}" autocomplete="off" spellcheck="false" onfocus="activeP3Input=this" onkeydown="if(event.key==='Enter'){checkP3('${item.id}', this);}"> ${item.after}</p></div>
+      <div class="q-controls">
+        <button class="btn btn-check" onclick="checkP3('${item.id}', this)">Kiểm tra</button>
+      </div>
+      <div class="q-feedback" id="fb-${item.id}"></div>
+    </div>
+  `).join("");
+  document.querySelectorAll("#p3-list .q-card").forEach(c=>markSolvedIfNeeded(c, c.dataset.id));
+}
+function checkP3(id, anchorEl){
+  const item = DATA.p3.find(x=>x.id===id);
+  const inputEl = document.getElementById("in-"+id);
+  const val = normalize(inputEl.value);
+  const fb = document.getElementById("fb-"+id);
+  const card = document.querySelector('#p3-list .q-card[data-id="'+id+'"]');
+  if(isLocked(id)) return;
+  if(!val){ fb.innerHTML = '<span class="fb-warn">Dâu chọn hoặc gõ một từ vào chỗ trống đã nhé.</span>'; return; }
+  attempts[id] = val;
+  if(val === item.answer.toLowerCase()){
+    fb.innerHTML = '<span class="fb-ok">'+pick(OK_MSG)+'</span>';
+    card.classList.add("solved");
+    awardSeed(item.id, anchorEl);
+  } else {
+    const n = registerAttempt(id);
+    if(n >= 2){
+      fb.innerHTML = '<span class="fb-warn">Dâu đã thử 2 lần cho câu này rồi, hết lượt. Làm lại bài để thử lại nhé.</span>';
+      lockItem(card);
+    } else {
+      const d = lev(val, item.answer.toLowerCase());
+      fb.innerHTML = (d>0 && d<=2) ? '<span class="fb-close">Gần đúng rồi, đếm lại số chữ trong từ này xem có khớp với từ trong giỏ không nhé. (còn 1 lượt thử)</span>' : '<span class="fb-warn">'+pick(WARN_MSG)+' (còn 1 lượt thử)</span>';
+      shakeEl(card);
+    }
+  }
+}
+
+/* ================= PART 4: Máy dò thời gian ================= */
+function renderP4(){
+  document.getElementById("p4-list").innerHTML = DATA.p4.map((item,i)=>{
+    const opts = shuffle([item.signal, ...item.decoys]);
+    const chips = opts.map(t=>`<button type="button" class="chip chip-signal" onclick="chooseSignal('${item.id}','${escAttr(t)}', this)">${t}</button>`).join("");
+    return `
+    <div class="q-card" data-id="${item.id}" id="p4card-${item.id}">
+      <div class="q-head"><span class="q-badge">${i+1}</span><p class="q-sentence">${item.before} (___) ${item.after}</p></div>
+      <div class="step-label">Bước 1: bấm vào từ tín hiệu thời gian đúng</div>
+      <div class="chip-row" id="p4step1-${item.id}">${chips}</div>
+      <div class="step2" id="p4step2-${item.id}" style="display:none;">
+        <span class="step-label" style="flex-basis:100%;">Bước 2: chia động từ cho đúng</span>
+        <input type="text" class="q-input" id="p4in-${item.id}" autocomplete="off" spellcheck="false" placeholder="Gõ động từ đã chia..." onkeydown="if(event.key==='Enter'){checkP4('${item.id}', this);}">
+        <button class="btn btn-check" onclick="checkP4('${item.id}', this)">Kiểm tra</button>
+      </div>
+      <div class="q-feedback" id="fb4-${item.id}"></div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("#p4-list .q-card").forEach(card=>{
+    markSolvedIfNeeded(card, card.dataset.id);
+    if(seeds.has(card.dataset.id)){
+      document.getElementById("p4step2-"+card.dataset.id).style.display = "flex";
+    }
+  });
+}
+function chooseSignal(itemId, chosenText, btnEl){
+  const item = DATA.p4.find(x=>x.id===itemId);
+  if(chosenText === item.signal){
+    document.querySelectorAll("#p4step1-"+itemId+" .chip").forEach(c=>c.classList.remove("chip-correct"));
+    btnEl.classList.add("chip-correct");
+    const step2 = document.getElementById("p4step2-"+itemId);
+    step2.style.display = "flex";
+    document.getElementById("p4in-"+itemId).focus();
+  } else {
+    shakeEl(btnEl);
+  }
+}
+function checkP4(itemId, anchorEl){
+  const item = DATA.p4.find(x=>x.id===itemId);
+  const val = normalize(document.getElementById("p4in-"+itemId).value);
+  const correct = item.correct.toLowerCase();
+  const fb = document.getElementById("fb4-"+itemId);
+  const card = document.getElementById("p4card-"+itemId);
+  if(isLocked(itemId)) return;
+  if(!val){ fb.innerHTML = '<span class="fb-warn">Dâu gõ động từ đã chia vào ô nhé.</span>'; return; }
+  attempts[itemId] = val;
+  if(val === correct){
+    fb.innerHTML = '<span class="fb-ok">'+pick(OK_MSG)+'</span>';
+    card.classList.add("solved");
+    awardSeed(itemId, anchorEl);
+  } else {
+    const n = registerAttempt(itemId);
+    if(n >= 2){
+      fb.innerHTML = '<span class="fb-warn">Dâu đã thử 2 lần cho câu này rồi, hết lượt. Làm lại bài để thử lại nhé.</span>';
+      lockItem(card);
+    } else {
+      const d = lev(val, correct);
+      fb.innerHTML = (d>0 && d<=2) ? '<span class="fb-close">Gần đúng rồi, xem lại đã thêm to be hoặc đuôi -s, -es chưa nhé. (còn 1 lượt thử)</span>' : '<span class="fb-warn">'+pick(WARN_MSG)+' (còn 1 lượt thử)</span>';
+      shakeEl(card);
+    }
+  }
+}
+
+/* ================= PART 5: Thợ săn lỗi sai ================= */
+function renderP5(){
+  document.getElementById("p5-list").innerHTML = DATA.p5.map((item,i)=>{
+    const toks = item.tokens.map((t,idx)=>`<button type="button" class="token" onclick="selectToken('${item.id}', ${idx}, this)">${t}</button>`).join("");
+    return `
+    <div class="q-card" data-id="${item.id}" id="p5card-${item.id}">
+      <div class="q-head"><span class="q-badge">${i+1}</span></div>
+      <div class="token-row">${toks}</div>
+      <div class="step2" id="p5step2-${item.id}" style="display:none;">
+        <span class="step-label" style="flex-basis:100%;">Viết lại từ đó cho đúng</span>
+        <input type="text" class="q-input" id="p5in-${item.id}" autocomplete="off" spellcheck="false" placeholder="Sửa lại thành..." onkeydown="if(event.key==='Enter'){checkP5('${item.id}', this);}">
+        <button class="btn btn-check" onclick="checkP5('${item.id}', this)">Kiểm tra</button>
+      </div>
+      <div class="q-feedback" id="fb5-${item.id}"></div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("#p5-list .q-card").forEach(card=>{
+    markSolvedIfNeeded(card, card.dataset.id);
+    if(seeds.has(card.dataset.id)){
+      document.getElementById("p5step2-"+card.dataset.id).style.display = "flex";
+      const item = DATA.p5.find(x=>x.id===card.dataset.id);
+      const tokBtn = card.querySelectorAll(".token")[item.wrongIndex];
+      if(tokBtn) tokBtn.classList.add("token-selected");
+    }
+  });
+}
+function selectToken(itemId, idx, el){
+  const item = DATA.p5.find(x=>x.id===itemId);
+  const card = document.getElementById("p5card-"+itemId);
+  if(idx === item.wrongIndex){
+    card.querySelectorAll(".token").forEach(t=>t.classList.remove("token-selected"));
+    el.classList.add("token-selected");
+    const step2 = document.getElementById("p5step2-"+itemId);
+    step2.style.display = "flex";
+    document.getElementById("p5in-"+itemId).focus();
+  } else {
+    el.classList.add("token-select-wrong");
+    setTimeout(()=>el.classList.remove("token-select-wrong"), 400);
+  }
+}
+function checkP5(itemId, anchorEl){
+  const item = DATA.p5.find(x=>x.id===itemId);
+  const val = normalizePunct(document.getElementById("p5in-"+itemId).value);
+  const correct = normalizePunct(item.correct);
+  const fb = document.getElementById("fb5-"+itemId);
+  const card = document.getElementById("p5card-"+itemId);
+  if(isLocked(itemId)) return;
+  if(!val){ fb.innerHTML = '<span class="fb-warn">Dâu gõ từ sửa lại vào ô nhé.</span>'; return; }
+  attempts[itemId] = val;
+  if(val === correct){
+    fb.innerHTML = '<span class="fb-ok">'+pick(OK_MSG)+'</span>';
+    card.classList.add("solved");
+    awardSeed(itemId, anchorEl);
+  } else {
+    const n = registerAttempt(itemId);
+    if(n >= 2){
+      fb.innerHTML = '<span class="fb-warn">Dâu đã thử 2 lần cho câu này rồi, hết lượt. Làm lại bài để thử lại nhé.</span>';
+      lockItem(card);
+    } else {
+      fb.innerHTML = '<span class="fb-warn">'+pick(WARN_MSG)+' (còn 1 lượt thử)</span>';
+      shakeEl(card);
+    }
+  }
+}
+
+/* ================= PART 6: Xây câu hoàn chỉnh ================= */
+function renderP6(){
+  document.getElementById("p6-list").innerHTML = DATA.p6.map((item,i)=>{
+    const blocksHtml = item.blocks.map((b,bi)=>{
+      if(b.type==="fixed"){
+        return '<span class="block block-fixed">'+b.text+'</span>';
+      }
+      const opts = shuffle(b.options).map(opt=>`<button type="button" class="chip chip-choice" onclick="chooseBlock('${item.id}', ${bi}, '${escAttr(opt)}', this)">${opt}</button>`).join("");
+      return '<span class="block choice-pair" data-idx="'+bi+'">'+opts+'</span>';
+    }).join("");
+    return `
+    <div class="q-card" data-id="${item.id}" id="p6card-${item.id}">
+      <div class="q-head"><span class="q-badge">${i+1}</span></div>
+      <div class="block-row">${blocksHtml}</div>
+      <div class="step2" id="p6step2-${item.id}" style="display:none;">
+        <span class="step-label" style="flex-basis:100%;">Viết lại cả câu cho hoàn chỉnh</span>
+        <input type="text" class="q-input" id="p6in-${item.id}" autocomplete="off" spellcheck="false" placeholder="Viết cả câu..." onkeydown="if(event.key==='Enter'){checkP6('${item.id}', this);}">
+        <button class="btn btn-check" onclick="checkP6('${item.id}', this)">Kiểm tra</button>
+      </div>
+      <div class="q-feedback" id="fb6-${item.id}"></div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("#p6-list .q-card").forEach(card=>{
+    const id = card.dataset.id;
+    const item = DATA.p6.find(x=>x.id===id);
+    if(seeds.has(id)){
+      card.classList.add("solved");
+      item.blocks.forEach((b,bi)=>{
+        if(b.type==="choice"){
+          const pairEl = card.querySelector('.choice-pair[data-idx="'+bi+'"]');
+          if(pairEl) pairEl.outerHTML = '<span class="block block-fixed block-resolved">'+b.correct+'</span>';
+        }
+      });
+      document.getElementById("p6step2-"+id).style.display = "flex";
+    }
+  });
+}
+function chooseBlock(itemId, blockIdx, optionText, btnEl){
+  const item = DATA.p6.find(x=>x.id===itemId);
+  const block = item.blocks[blockIdx];
+  if(optionText === block.correct){
+    const pairEl = btnEl.closest(".choice-pair");
+    pairEl.outerHTML = '<span class="block block-fixed block-resolved">'+optionText+'</span>';
+    const card = document.getElementById("p6card-"+itemId);
+    if(!card.querySelector(".choice-pair")){
+      const step2 = document.getElementById("p6step2-"+itemId);
+      step2.style.display = "flex";
+      document.getElementById("p6in-"+itemId).focus();
+    }
+  } else {
+    btnEl.classList.add("chip-wrong-flash");
+    setTimeout(()=>btnEl.classList.remove("chip-wrong-flash"), 400);
+  }
+}
+function checkP6(itemId, anchorEl){
+  const item = DATA.p6.find(x=>x.id===itemId);
+  const val = normalizePunct(document.getElementById("p6in-"+itemId).value);
+  const correct = normalizePunct(item.key);
+  const fb = document.getElementById("fb6-"+itemId);
+  const card = document.getElementById("p6card-"+itemId);
+  if(isLocked(itemId)) return;
+  if(!val){ fb.innerHTML = '<span class="fb-warn">Dâu viết cả câu vào ô nhé.</span>'; return; }
+  attempts[itemId] = val;
+  if(val === correct){
+    fb.innerHTML = '<span class="fb-ok">'+pick(OK_MSG)+'</span>';
+    card.classList.add("solved");
+    awardSeed(itemId, anchorEl);
+  } else {
+    const n = registerAttempt(itemId);
+    if(n >= 2){
+      fb.innerHTML = '<span class="fb-warn">Dâu đã thử 2 lần cho câu này rồi, hết lượt. Làm lại bài để thử lại nhé.</span>';
+      lockItem(card);
+    } else {
+      fb.innerHTML = '<span class="fb-warn">Gần đúng rồi, xem lại từng từ và dấu câu nhé. (còn 1 lượt thử)</span>';
+      shakeEl(card);
+    }
+  }
+}
+
+/* ================= SUBMIT / EMAIL REPORT ================= */
+const REPORT_CONFIG = [
+  {key:'p1', label:'Phần 1 – Thám tử chính tả', prompt:item=>item.sentence, correct:item=>item.answer},
+  {key:'p2', label:'Phần 2 – Kho báu chữ cái', prompt:item=>item.def, correct:item=>item.word},
+  {key:'p3', label:'Phần 3 – Giỏ từ vựng', prompt:item=>item.before+' ___ '+item.after, correct:item=>item.answer},
+  {key:'p4', label:'Phần 4 – Máy dò thời gian', prompt:item=>item.before+' (___) '+item.after, correct:item=>item.correct},
+  {key:'p5', label:'Phần 5 – Thợ săn lỗi sai', prompt:item=>item.tokens.join(' '), correct:item=>item.correct},
+  {key:'p6', label:'Phần 6 – Xây câu hoàn chỉnh', prompt:item=>item.key, correct:item=>item.key}
+];
+function elapsedStr(){
+  const secs = Math.max(0, Math.floor((Date.now()-startTime)/1000));
+  return String(Math.floor(secs/60)).padStart(2,"0")+":"+String(secs%60).padStart(2,"0");
+}
+function lockAll(){
+  document.querySelectorAll('.q-input, .btn-check, .btn-hint, .chip, .token, .wb-chip').forEach(el=>{ el.disabled = true; });
+  const submitBtn = document.getElementById("submitBtn");
+  if(submitBtn) submitBtn.disabled = true;
+}
+function showSummary(){
+  const box = document.getElementById("summaryBox");
+  box.innerHTML =
+    '<h3>Đã nộp bài</h3>' +
+    '<p><strong>Điểm: '+seeds.size+' / 90 câu đúng</strong></p>' +
+    '<p>Thời gian làm bài: '+elapsedStr()+'</p>' +
+    '<p>Số lần rời khỏi trang khi làm bài: '+tabSwitchCount+'</p>' +
+    '<p style="margin-top:10px;">Kết quả đang được gửi cho anh, Dâu không cần làm gì thêm. Nếu muốn luyện lại, bấm "Làm lại từ đầu" bên dưới nhé.</p>';
+  box.classList.add("show");
+  if(box.scrollIntoView) box.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+function sendResultEmail(){
+  const status = document.getElementById("emailStatus");
+  let lines = [];
+  lines.push("Học sinh: Dâu");
+  lines.push("Bài: Vườn dâu ôn luyện Movers – Bài 2");
+  lines.push("Điểm: " + seeds.size + " / 90");
+  lines.push("Thời gian làm bài: " + elapsedStr());
+  lines.push("Số lần rời khỏi trang khi làm bài: " + tabSwitchCount);
+  lines.push("");
+
+  REPORT_CONFIG.forEach(cfg=>{
+    const items = DATA[cfg.key];
+    const wrong = items.filter(item=>!seeds.has(item.id));
+    lines.push("=== " + cfg.label + " (" + (items.length-wrong.length) + "/" + items.length + " đúng) ===");
+    if(wrong.length === 0){
+      lines.push("Tất cả các câu đều đúng.");
+    } else {
+      wrong.forEach(item=>{
+        const given = attempts[item.id];
+        lines.push("Câu: " + cfg.prompt(item));
+        lines.push("  Dâu làm: " + (given ? given : "(chưa làm)"));
+        lines.push("  Đáp án đúng: " + cfg.correct(item));
+      });
+    }
+    lines.push("");
+  });
+
+  if(status){
+    status.style.color = "#4b5b54";
+    status.textContent = "Đang gửi kết quả cho anh...";
+  }
+
+  fetch("https://formsubmit.co/ajax/" + TEACHER_EMAIL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify({
+      _subject: "Kết quả luyện tập Movers - Dâu (Bài 2)",
+      name: "Dâu",
+      score: seeds.size + " / 90",
+      tab_switches: String(tabSwitchCount),
+      answers: lines.join("\n")
+    })
+  })
+  .then(res => res.json())
+  .then(() => {
+    if(status){
+      status.style.color = "#1c6e4a";
+      status.textContent = "Kết quả đã được gửi cho anh.";
+    }
+  })
+  .catch(() => {
+    if(status){
+      status.style.color = "#a8402d";
+      status.textContent = "Gửi kết quả không thành công, anh hãy kiểm tra lại kết nối mạng.";
+    }
+  });
+}
+function doSubmit(){
+  if(examSubmitted) return;
+  const unanswered = 90 - seeds.size;
+  if(unanswered > 0){
+    const ok = confirm("Dâu còn " + unanswered + " câu chưa làm đúng hoặc chưa làm. Vẫn muốn nộp bài luôn chứ?");
+    if(!ok) return;
+  }
+  examSubmitted = true;
+  stopTimer();
+  lockAll();
+  showSummary();
+  sendResultEmail();
+}
+
+/* ================= INIT / RESET ================= */
+function renderAll(){
+  renderP1();
+  renderP2();
+  renderP3wordbank();
+  renderP3();
+  renderP4();
+  renderP5();
+  renderP6();
+  updateSeedCounter();
+}
+function resetProgress(){
+  const ok = confirm("Làm lại từ đầu nhé? Toàn bộ kết quả đã làm sẽ mất hết đó.");
+  if(!ok) return;
+  seeds.clear();
+  saveProgress();
+  finaleCelebrated = false;
+  hintLevel1 = {};
+  attempts = {};
+  attemptCounts = {};
+  activeP3Input = null;
+  examSubmitted = false;
+  tabSwitchCount = 0;
+  startTime = Date.now();
+  startTimer();
+  const box = document.getElementById("summaryBox");
+  if(box){ box.classList.remove("show"); box.innerHTML = ""; }
+  const status = document.getElementById("emailStatus");
+  if(status) status.textContent = "";
+  const submitBtn = document.getElementById("submitBtn");
+  if(submitBtn) submitBtn.disabled = false;
+  renderAll();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+loadProgress();
+finaleCelebrated = seeds.size >= 90;
+renderAll();
+startTimer();
+</script>
+</body>
+</html>
