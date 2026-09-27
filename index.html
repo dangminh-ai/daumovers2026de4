@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <meta name="theme-color" content="#1f7a8c">
-<title>Vườn dâu ôn luyện Movers cùng Dâu – Bài 4</title>
+<title>Vườn dâu ôn luyện Movers cùng Dâu - Bài 4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -333,7 +333,7 @@
 
 <header class="hero">
   <div class="hero-berries" aria-hidden="true"><span>🍓</span><span>🍃</span><span>🍓</span><span>🍃</span></div>
-  <h1>Vườn dâu ôn luyện Movers – Bài 2 🍓</h1>
+  <h1>Vườn dâu ôn luyện Movers – Bài 4 🍓</h1>
   <p>Dâu ơi, hãy coi đây như một bài kiểm tra thật: đọc thật kỹ, tự suy nghĩ trước khi bấm gợi ý, làm lần lượt từ đầu đến cuối rồi mới nộp bài nhé.</p>
   <div class="progress-wrap">
     <div class="progress-track"><div class="progress-fill" id="progressFill" role="progressbar" aria-valuemin="0" aria-valuemax="90" aria-valuenow="0"></div></div>
@@ -1109,7 +1109,7 @@ function sendResultEmail(){
   const status = document.getElementById("emailStatus");
   let lines = [];
   lines.push("Học sinh: Dâu");
-  lines.push("Bài: Vườn dâu ôn luyện Movers – Bài 2");
+  lines.push("Bài: Vườn dâu ôn luyện Movers – Bài 4");
   lines.push("Điểm: " + seeds.size + " / 90");
   lines.push("Thời gian làm bài: " + elapsedStr());
   lines.push("Số lần rời khỏi trang khi làm bài: " + tabSwitchCount);
@@ -1141,7 +1141,7 @@ function sendResultEmail(){
     method: "POST",
     headers: { "Content-Type": "application/json", "Accept": "application/json" },
     body: JSON.stringify({
-      _subject: "Kết quả luyện tập Movers - Dâu (Bài 2)",
+      _subject: "Kết quả luyện tập Movers - Dâu (Bài 4)",
       name: "Dâu",
       score: seeds.size + " / 90",
       tab_switches: String(tabSwitchCount),
